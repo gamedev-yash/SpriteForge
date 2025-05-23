@@ -12,13 +12,16 @@ router.post('/pack', upload.array('images'), async (req, res) => {
   const outputName = Date.now();
   const outputPath = path.join(__dirname, '../../output');
   
+  // Create array of uploaded file paths
+  const uploadedFiles = req.files.map(file => file.path);
+  
   const texturePackerArgs = [
     '--sheet', `${outputPath}/sprite-${outputName}.png`,
     '--data', `${outputPath}/sprite-${outputName}.json`,
     '--max-width', '2048',
     '--max-height', '2048',
     '--format', 'json',
-    path.join(__dirname, '../../uploads/*.png')
+    ...uploadedFiles  // Spread the actual file paths
   ];
 
   try {
