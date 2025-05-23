@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const result = document.getElementById('result');
     const previewContainer = document.getElementById('imagePreviewContainer');
     const cleanupBtn = document.getElementById('cleanupBtn');
+    cleanupBtn.style.display = 'none'; // Hide by default
     
     let files = new DataTransfer();
     
@@ -77,6 +78,23 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = files.files.length === 0;
     }
 
+    async function checkUploads() {
+        try {
+            const response = await fetch('/check-uploads');
+            const data = await response.json();
+            if (data.hasFiles) {
+                cleanupBtn.style.display = 'block';
+                return true;
+            } else {
+                cleanupBtn.style.display = 'none';
+                return false;
+            }
+        } catch (error) {
+            console.error('Failed to check uploads:', error);
+            return false;
+        }
+    }
+
     async function cleanupUploads() {
         try {
             const response = await fetch('/cleanup', {
@@ -85,20 +103,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log('Cleanup response:', data);
             
+            if (data.filesDeleted > 0) {
+                alert(`Cleaned up ${data.filesDeleted} files`);
+            }
+            
             // Clear the preview container and reset files
             previewContainer.innerHTML = '';
             files = new DataTransfer();
             updateFileInput();
-            
-            alert('All uploads have been cleaned up');
+            cleanupBtn.style.display = 'none';
         } catch (error) {
             console.error('Cleanup failed:', error);
             alert('Failed to clean up uploads');
         }
     }
 
-    // Clean uploads when page loads/refreshes
-    cleanupUploads();
+    // Check for existing uploads on page load
+    checkUploads();
 
     // Handle cleanup button click
     cleanupBtn.addEventListener('click', async () => {
@@ -123,9 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         
         try {
-            // Clean previous uploads first
-            await cleanupUploads();
-
             const response = await fetch('/pack', {
                 method: 'POST',
                 body: formData
@@ -137,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 console.log('Sprite sheet generated successfully');
                 showResult(data.files);
+                await checkUploads(); // Check if we need to show cleanup button
                 // Clear the preview container and reset files
                 previewContainer.innerHTML = '';
                 files = new DataTransfer();
