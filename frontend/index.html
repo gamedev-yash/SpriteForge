@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpriteForge</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SpriteForge</h1>
+        <form id="uploadForm">
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" multiple accept="image/*" hidden>
+                <div class="upload-message">
+                    Drop images here or click to upload
+                </div>
+            </div>
+            <button type="submit" id="submitBtn" disabled>Generate Sprite Sheet</button>
+        </form>
+        <div id="result" class="hidden">
+            <h2>Generated Files</h2>
+            <div class="download-links"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
