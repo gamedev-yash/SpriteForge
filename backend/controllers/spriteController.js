@@ -48,7 +48,9 @@ class SpriteController {
             path: f.path,
             size: f.size
           })),
-          used: uploadedFiles
+          used: uploadedFiles,
+          uniqueCount: new Set(uploadedFiles).size,
+          duplicateCount: uploadedFiles.length - new Set(uploadedFiles).size
         }
       });
     } catch (error) {

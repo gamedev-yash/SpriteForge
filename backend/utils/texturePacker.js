@@ -18,10 +18,21 @@ class TexturePackerUtil {
   }
 
   static async generateSprite(files, outputPath, outputName) {
+    // Remove duplicate files by using Set
+    const uniqueFiles = [...new Set(files)];
+    
+    if (uniqueFiles.length !== files.length) {
+        console.log('Removed duplicate files:', {
+            original: files.length,
+            unique: uniqueFiles.length,
+            duplicates: files.length - uniqueFiles.length
+        });
+    }
+    
     const outputPngPath = path.join(outputPath, `sprite-${outputName}.png`).replace(/\\/g, '\\\\');
     const outputJsonPath = path.join(outputPath, `sprite-${outputName}.json`).replace(/\\/g, '\\\\');
     
-    console.log('TexturePacker input files:', files);
+    console.log('TexturePacker input files:', uniqueFiles);
     
     const texturePackerArgs = [
       '--sheet', outputPngPath,
@@ -31,8 +42,7 @@ class TexturePackerUtil {
       '--format', 'json',
       '--quiet',
       '--enable-rotation',
-      '--trim',
-      ...files.map(f => f.replace(/\\/g, '\\\\'))
+      ...uniqueFiles.map(f => f.replace(/\\/g, '\\\\'))
     ];
 
     console.log('TexturePacker command:', 'TexturePacker', texturePackerArgs.join(' '));
