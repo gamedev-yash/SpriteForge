@@ -2,6 +2,18 @@ const fs = require('fs');
 const path = require('path');
 const TexturePackerUtil = require('../utils/texturePacker');
 
+const getUniqueOutputName = (baseName, outputPath) => {
+  let name = baseName;
+  let counter = 1;
+  while (
+    fs.existsSync(path.join(outputPath, `${name}.png`)) ||
+    fs.existsSync(path.join(outputPath, `${name}.json`))
+  ) {
+    name = `${baseName}_${counter++}`;
+  }
+  return name;
+};
+
 class SpriteController {
   static async generateSprite(req, res) {
     if (!req.files || req.files.length === 0) {
@@ -18,9 +30,11 @@ class SpriteController {
       enableRotation
     } = req.body;
 
-    const outputName = outputBaseName || 'sprite';
     const outputPath = path.join(__dirname, '../../output');
     const uploadedFiles = req.files.map(file => file.path);
+
+    let outputName = outputBaseName || 'sprite';
+    outputName = getUniqueOutputName(outputName, outputPath);
 
     try {
       // Ensure output directory exists
