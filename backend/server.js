@@ -17,8 +17,13 @@ app.use(cors());
   }
 });
 
+// Serve static files from frontend directory
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Serve output files
 app.use('/output', express.static(path.join(__dirname, '../output')));
+
+// Use routes
 app.use('/', packRoutes);
 
 app.listen(port, () => {
