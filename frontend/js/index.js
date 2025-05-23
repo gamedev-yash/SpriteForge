@@ -107,11 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Cleaned up ${data.filesDeleted} files`);
             }
             
-            // Clear the preview container and reset files
+            // Clear everything
             previewContainer.innerHTML = '';
             files = new DataTransfer();
             updateFileInput();
             cleanupBtn.style.display = 'none';
+            document.getElementById('result').classList.add('hidden'); // Hide download section
         } catch (error) {
             console.error('Cleanup failed:', error);
             alert('Failed to clean up uploads');
@@ -156,10 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Sprite sheet generated successfully');
                 showResult(data.files);
                 await checkUploads(); // Check if we need to show cleanup button
-                // Clear the preview container and reset files
-                previewContainer.innerHTML = '';
-                files = new DataTransfer();
-                updateFileInput();
             } else {
                 console.error('Error:', data.error);
                 alert(`Error generating sprite sheet: ${data.error}`);
@@ -178,14 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function showResult(files) {
         const links = document.querySelector('.download-links');
-        links.innerHTML = `
-            <a href="${files.spriteSheet}" download>
-                <i class="fas fa-download"></i> Download Sprite Sheet
-            </a>
-            <a href="${files.data}" download>
-                <i class="fas fa-download"></i> Download Sprite Data
-            </a>
-        `;
-        result.classList.remove('hidden');
+        const resultDiv = document.getElementById('result');
+
+        // Only show download links if we have files to preview
+        if (previewContainer.children.length > 0) {
+            links.innerHTML = `
+                <a href="${files.spriteSheet}" download>
+                    <i class="fas fa-download"></i> Download Sprite Sheet
+                </a>
+                <a href="${files.data}" download>
+                    <i class="fas fa-download"></i> Download Sprite Data
+                </a>
+            `;
+            resultDiv.classList.remove('hidden');
+        } else {
+            links.innerHTML = '';
+            resultDiv.classList.add('hidden');
+        }
     }
 });
