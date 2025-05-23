@@ -35,6 +35,15 @@ class SpriteController {
         throw new Error('Output files were not created');
       }
 
+      res.json({
+        success: true,
+        message: 'Sprite sheet generated successfully',
+        files: {
+          spriteSheet: `/output/sprite-${outputName}.png`,
+          data: `/output/sprite-${outputName}.json`
+        }
+      });
+
       // After successful sprite generation, clean up uploaded files
       uploadedFiles.forEach(file => {
         try {
@@ -42,15 +51,6 @@ class SpriteController {
           console.log(`Cleaned up: ${file}`);
         } catch (err) {
           console.error(`Failed to clean up file ${file}:`, err);
-        }
-      });
-
-      res.json({
-        success: true,
-        message: 'Sprite sheet generated successfully',
-        files: {
-          spriteSheet: `/output/sprite-${outputName}.png`,
-          data: `/output/sprite-${outputName}.json`
         }
       });
     } catch (error) {

@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('submitBtn');
     const result = document.getElementById('result');
     const previewContainer = document.getElementById('imagePreviewContainer');
+    const cleanupBtn = document.getElementById('cleanupBtn');
     
     let files = new DataTransfer();
     
@@ -76,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = files.files.length === 0;
     }
 
-    // Add cleanup function
     async function cleanupUploads() {
         try {
             const response = await fetch('/cleanup', {
@@ -84,13 +84,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             console.log('Cleanup response:', data);
+            
+            // Clear the preview container and reset files
+            previewContainer.innerHTML = '';
+            files = new DataTransfer();
+            updateFileInput();
+            
+            alert('All uploads have been cleaned up');
         } catch (error) {
             console.error('Cleanup failed:', error);
+            alert('Failed to clean up uploads');
         }
     }
 
-    // Call cleanup when page loads
+    // Clean uploads when page loads/refreshes
     cleanupUploads();
+
+    // Handle cleanup button click
+    cleanupBtn.addEventListener('click', async () => {
+        if (confirm('Are you sure you want to clean up all uploaded files?')) {
+            cleanupBtn.disabled = true;
+            cleanupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cleaning...';
+            await cleanupUploads();
+            cleanupBtn.disabled = false;
+            cleanupBtn.innerHTML = '<i class="fas fa-broom"></i> Clean All Uploads';
+        }
+    });
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
