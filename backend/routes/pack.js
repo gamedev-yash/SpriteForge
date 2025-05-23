@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload');
 const SpriteController = require('../controllers/spriteController');
+const path = require('path');
+const fs = require('fs');
 
 router.get('/check-uploads', async (req, res) => {
   try {
@@ -13,6 +15,16 @@ router.get('/check-uploads', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to check uploads' });
   }
+});
+
+router.get('/check-output-name', async (req, res) => {
+  const { name } = req.query;
+  const outputPath = path.join(__dirname, '../../output');
+  const exists = (
+    fs.existsSync(path.join(outputPath, `${name}.png`)) ||
+    fs.existsSync(path.join(outputPath, `${name}.json`))
+  );
+  res.json({ exists });
 });
 
 router.post(
