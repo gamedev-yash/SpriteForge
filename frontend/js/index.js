@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        console.log('Uploading files:', Array.from(files.files).map(f => f.name));
         
         try {
             const response = await fetch('/pack', {
@@ -94,12 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
+            console.log('Server response:', data);
+
             if (data.success) {
+                console.log('Sprite sheet generated successfully');
                 showResult(data.files);
             } else {
-                alert('Error generating sprite sheet');
+                console.error('Error:', data.error);
+                alert(`Error generating sprite sheet: ${data.error}`);
+                if (data.details) {
+                    console.error('Details:', data.details);
+                }
             }
         } catch (error) {
+            console.error('Request failed:', error);
             alert('Error uploading files');
         } finally {
             submitBtn.disabled = false;
