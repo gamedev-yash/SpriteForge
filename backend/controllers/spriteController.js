@@ -43,16 +43,6 @@ class SpriteController {
           data: `/output/sprite-${outputName}.json`
         }
       });
-
-      // After successful sprite generation, clean up uploaded files
-      uploadedFiles.forEach(file => {
-        try {
-          fs.unlinkSync(file);
-          console.log(`Cleaned up: ${file}`);
-        } catch (err) {
-          console.error(`Failed to clean up file ${file}:`, err);
-        }
-      });
     } catch (error) {
       console.error('Error processing request:', error);
       res.status(500).json({ 
@@ -62,22 +52,33 @@ class SpriteController {
     }
   }
 
-  static async cleanupUploads() {
+  static async checkUploads() {
     const uploadsDir = path.join(__dirname, '../../uploads');
     if (fs.existsSync(uploadsDir)) {
       const files = fs.readdirSync(uploadsDir);
-      console.log(`Cleaning up ${files.length} files from uploads directory`);
+      return files.length;
+    }
+    return 0;
+  }
+
+  static async cleanupUploads() {
+    const uploadsDir = path.join(__dirname, '../../uploads');
+    let filesDeleted = 0;
+    
+    if (fs.existsSync(uploadsDir)) {
+      const files = fs.readdirSync(uploadsDir);
       for (const file of files) {
         const filePath = path.join(uploadsDir, file);
         try {
           fs.unlinkSync(filePath);
+          filesDeleted++;
           console.log(`Cleaned up: ${filePath}`);
         } catch (err) {
           console.error(`Failed to clean up file ${filePath}:`, err);
-          throw err;
         }
       }
     }
+    return filesDeleted;
   }
 }
 
