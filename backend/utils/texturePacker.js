@@ -21,6 +21,8 @@ class TexturePackerUtil {
     const outputPngPath = path.join(outputPath, `sprite-${outputName}.png`).replace(/\\/g, '\\\\');
     const outputJsonPath = path.join(outputPath, `sprite-${outputName}.json`).replace(/\\/g, '\\\\');
     
+    console.log('TexturePacker input files:', files);
+    
     const texturePackerArgs = [
       '--sheet', outputPngPath,
       '--data', outputJsonPath,
@@ -33,6 +35,8 @@ class TexturePackerUtil {
       ...files.map(f => f.replace(/\\/g, '\\\\'))
     ];
 
+    console.log('TexturePacker command:', 'TexturePacker', texturePackerArgs.join(' '));
+
     return new Promise((resolve, reject) => {
       const process = execFile('TexturePacker', texturePackerArgs, {
         timeout: 30000
@@ -44,6 +48,17 @@ class TexturePackerUtil {
           return;
         }
         console.log('TexturePacker Output:', stdout);
+        
+        // Verify the output files after generation
+        if (fs.existsSync(outputPngPath) && fs.existsSync(outputJsonPath)) {
+          const jsonContent = fs.readFileSync(outputJsonPath, 'utf8');
+          const spriteData = JSON.parse(jsonContent);
+          console.log('Generated sprite data:', {
+            totalFrames: Object.keys(spriteData.frames).length,
+            frameNames: Object.keys(spriteData.frames)
+          });
+        }
+        
         resolve({ outputPngPath, outputJsonPath });
       });
 
