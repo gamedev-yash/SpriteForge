@@ -17,21 +17,27 @@ class TexturePackerUtil {
     });
   }
 
-  static async generateSprite(files, outputPath, outputName) {
-    const outputPngPath = path.join(outputPath, `sprite-${outputName}.png`).replace(/\\/g, '\\\\');
-    const outputJsonPath = path.join(outputPath, `sprite-${outputName}.json`).replace(/\\/g, '\\\\');
-    
+  static async generateSprite(files, outputPath, outputName, options = {}) {
+    const uniqueFiles = [...new Set(files)];
+    const outputPngPath = path.join(outputPath, `${outputName}.png`).replace(/\\/g, '\\\\');
+    const outputJsonPath = path.join(outputPath, `${outputName}.json`).replace(/\\/g, '\\\\');
+
+    // Build CLI args based on options
     const texturePackerArgs = [
       '--sheet', outputPngPath,
       '--data', outputJsonPath,
-      '--max-width', '2048',
-      '--max-height', '2048',
-      '--format', 'json',
-      '--quiet',
-      '--enable-rotation',
-      '--trim',
-      ...files.map(f => f.replace(/\\/g, '\\\\'))
+      '--max-width', options.maxWidth || '2048',
+      '--max-height', options.maxHeight || '2048',
+      '--format', options.format || 'json',
+      '--quiet'
     ];
+    if (options.trim) texturePackerArgs.push('--trim');
+    if (options.enableRotation) texturePackerArgs.push('--enable-rotation');
+    // Add more options as needed
+
+    texturePackerArgs.push(...uniqueFiles.map(f => f.replace(/\\/g, '\\\\')));
+
+    console.log('TexturePacker command:', 'TexturePacker', texturePackerArgs.join(' '));
 
     return new Promise((resolve, reject) => {
       const process = execFile('TexturePacker', texturePackerArgs, {
@@ -44,6 +50,17 @@ class TexturePackerUtil {
           return;
         }
         console.log('TexturePacker Output:', stdout);
+        
+        // Verify the output files after generation
+        if (fs.existsSync(outputPngPath) && fs.existsSync(outputJsonPath)) {
+          const jsonContent = fs.readFileSync(outputJsonPath, 'utf8');
+          const spriteData = JSON.parse(jsonContent);
+          console.log('Generated sprite data:', {
+            totalFrames: Object.keys(spriteData.frames).length,
+            frameNames: Object.keys(spriteData.frames)
+          });
+        }
+        
         resolve({ outputPngPath, outputJsonPath });
       });
 

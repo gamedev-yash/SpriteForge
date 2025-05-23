@@ -2,17 +2,39 @@ const fs = require('fs');
 const path = require('path');
 const TexturePackerUtil = require('../utils/texturePacker');
 
+const getUniqueOutputName = (baseName, outputPath) => {
+  let name = baseName;
+  let counter = 1;
+  while (
+    fs.existsSync(path.join(outputPath, `${name}.png`)) ||
+    fs.existsSync(path.join(outputPath, `${name}.json`))
+  ) {
+    name = `${baseName}_${counter++}`;
+  }
+  return name;
+};
+
 class SpriteController {
   static async generateSprite(req, res) {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
-    console.log('Processing files:', req.files.map(f => f.originalname));
-    
-    const outputName = Date.now();
+    // Get options from form
+    const {
+      outputBaseName = 'sprite',
+      maxWidth = '2048',
+      maxHeight = '2048',
+      format = 'json',
+      trim,
+      enableRotation
+    } = req.body;
+
     const outputPath = path.join(__dirname, '../../output');
     const uploadedFiles = req.files.map(file => file.path);
+
+    let outputName = outputBaseName || 'sprite';
+    outputName = getUniqueOutputName(outputName, outputPath);
 
     try {
       // Ensure output directory exists
@@ -27,7 +49,14 @@ class SpriteController {
       const { outputPngPath, outputJsonPath } = await TexturePackerUtil.generateSprite(
         uploadedFiles,
         outputPath,
-        outputName
+        outputName,
+        {
+          maxWidth,
+          maxHeight,
+          format,
+          trim: trim === 'true',
+          enableRotation: enableRotation === 'true'
+        }
       );
 
       // Verify output files exist
@@ -39,15 +68,26 @@ class SpriteController {
         success: true,
         message: 'Sprite sheet generated successfully',
         files: {
-          spriteSheet: `/output/sprite-${outputName}.png`,
-          data: `/output/sprite-${outputName}.json`
+          spriteSheet: `/output/${outputName}.png`,
+          data: `/output/${outputName}.json`
+        },
+        processedFiles: {
+          received: req.files.map(f => ({ 
+            name: f.originalname,
+            path: f.path,
+            size: f.size
+          })),
+          used: uploadedFiles,
+          uniqueCount: new Set(uploadedFiles).size,
+          duplicateCount: uploadedFiles.length - new Set(uploadedFiles).size
         }
       });
     } catch (error) {
       console.error('Error processing request:', error);
       res.status(500).json({ 
         error: 'Failed to process images',
-        details: error.message
+        details: error.message,
+        files: req.files.map(f => f.originalname) // Include files in error response
       });
     }
   }

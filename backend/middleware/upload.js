@@ -8,12 +8,16 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+let fileCounter = 0; // Counter to ensure unique filenames
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir)
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname))
+    // Use combination of timestamp and counter for unique names
+    const uniqueName = `${Date.now()}-${++fileCounter}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
   }
 });
 

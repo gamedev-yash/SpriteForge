@@ -20,6 +20,40 @@
                 </div>
             </div>
             <div id="imagePreviewContainer" class="image-preview-container"></div>
+            <fieldset>
+                <legend>Sprite Sheet Options</legend>
+                <label>
+                    Output Base Name:
+                    <input type="text" id="outputBaseName" name="outputBaseName" placeholder="sprite" value="sprite" />
+                </label>
+                <label>
+                    Max Width:
+                    <input type="number" id="maxWidth" name="maxWidth" placeholder="2048" value="2048" min="1" />
+                </label>
+                <label>
+                    Max Height:
+                    <input type="number" id="maxHeight" name="maxHeight" placeholder="2048" value="2048" min="1" />
+                </label>
+                <label>
+                    Format:
+                    <select id="format" name="format">
+                        <option value="json">JSON</option>
+                        <option value="json-array">JSON Array</option>
+                        <option value="phaser">Phaser</option>
+                        <option value="unity">Unity</option>
+                        <!-- Add more formats as needed -->
+                    </select>
+                </label>
+                <label>
+                    <input type="checkbox" id="trim" name="trim" checked />
+                    Trim Transparent Pixels
+                </label>
+                <label>
+                    <input type="checkbox" id="enableRotation" name="enableRotation" />
+                    Enable Rotation
+                </label>
+                <!-- Add more options as needed -->
+            </fieldset>
             <button type="submit" id="submitBtn" disabled>Generate Sprite Sheet</button>
         </form>
         <div id="result" class="hidden">
