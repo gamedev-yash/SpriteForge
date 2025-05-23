@@ -15,7 +15,12 @@ router.get('/check-uploads', async (req, res) => {
   }
 });
 
-router.post('/pack', upload.array('images'), SpriteController.generateSprite);
+router.post(
+  '/pack',
+  upload.array('images'),
+  express.urlencoded({ extended: true }),
+  SpriteController.generateSprite
+);
 router.post('/cleanup', async (req, res) => {
   try {
     await SpriteController.cleanupUploads();

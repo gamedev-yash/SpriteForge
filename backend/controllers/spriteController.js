@@ -8,9 +8,17 @@ class SpriteController {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
-    console.log('Processing files:', req.files.map(f => f.originalname));
-    
-    const outputName = Date.now();
+    // Get options from form
+    const {
+      outputBaseName = 'sprite',
+      maxWidth = '2048',
+      maxHeight = '2048',
+      format = 'json',
+      trim,
+      enableRotation
+    } = req.body;
+
+    const outputName = outputBaseName || 'sprite';
     const outputPath = path.join(__dirname, '../../output');
     const uploadedFiles = req.files.map(file => file.path);
 
@@ -27,7 +35,14 @@ class SpriteController {
       const { outputPngPath, outputJsonPath } = await TexturePackerUtil.generateSprite(
         uploadedFiles,
         outputPath,
-        outputName
+        outputName,
+        {
+          maxWidth,
+          maxHeight,
+          format,
+          trim: trim === 'true',
+          enableRotation: enableRotation === 'true'
+        }
       );
 
       // Verify output files exist
@@ -39,8 +54,8 @@ class SpriteController {
         success: true,
         message: 'Sprite sheet generated successfully',
         files: {
-          spriteSheet: `/output/sprite-${outputName}.png`,
-          data: `/output/sprite-${outputName}.json`
+          spriteSheet: `/output/${outputName}.png`,
+          data: `/output/${outputName}.json`
         },
         processedFiles: {
           received: req.files.map(f => ({ 

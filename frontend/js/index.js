@@ -137,12 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData();
         
-        // Log files being sent
-        console.log('Sending files:', Array.from(files.files).map(f => f.name));
-        
+        // Add images
         Array.from(files.files).forEach(file => {
             formData.append('images', file);
         });
+
+        // Add options
+        formData.append('outputBaseName', document.getElementById('outputBaseName').value || 'sprite');
+        formData.append('maxWidth', document.getElementById('maxWidth').value || '2048');
+        formData.append('maxHeight', document.getElementById('maxHeight').value || '2048');
+        formData.append('format', document.getElementById('format').value || 'json');
+        formData.append('trim', document.getElementById('trim').checked ? 'true' : '');
+        formData.append('enableRotation', document.getElementById('enableRotation').checked ? 'true' : '');
         
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';

@@ -17,33 +17,25 @@ class TexturePackerUtil {
     });
   }
 
-  static async generateSprite(files, outputPath, outputName) {
-    // Remove duplicate files by using Set
+  static async generateSprite(files, outputPath, outputName, options = {}) {
     const uniqueFiles = [...new Set(files)];
-    
-    if (uniqueFiles.length !== files.length) {
-        console.log('Removed duplicate files:', {
-            original: files.length,
-            unique: uniqueFiles.length,
-            duplicates: files.length - uniqueFiles.length
-        });
-    }
-    
-    const outputPngPath = path.join(outputPath, `sprite-${outputName}.png`).replace(/\\/g, '\\\\');
-    const outputJsonPath = path.join(outputPath, `sprite-${outputName}.json`).replace(/\\/g, '\\\\');
-    
-    console.log('TexturePacker input files:', uniqueFiles);
-    
+    const outputPngPath = path.join(outputPath, `${outputName}.png`).replace(/\\/g, '\\\\');
+    const outputJsonPath = path.join(outputPath, `${outputName}.json`).replace(/\\/g, '\\\\');
+
+    // Build CLI args based on options
     const texturePackerArgs = [
       '--sheet', outputPngPath,
       '--data', outputJsonPath,
-      '--max-width', '2048',
-      '--max-height', '2048',
-      '--format', 'json',
-      '--quiet',
-      '--enable-rotation',
-      ...uniqueFiles.map(f => f.replace(/\\/g, '\\\\'))
+      '--max-width', options.maxWidth || '2048',
+      '--max-height', options.maxHeight || '2048',
+      '--format', options.format || 'json',
+      '--quiet'
     ];
+    if (options.trim) texturePackerArgs.push('--trim');
+    if (options.enableRotation) texturePackerArgs.push('--enable-rotation');
+    // Add more options as needed
+
+    texturePackerArgs.push(...uniqueFiles.map(f => f.replace(/\\/g, '\\\\')));
 
     console.log('TexturePacker command:', 'TexturePacker', texturePackerArgs.join(' '));
 
