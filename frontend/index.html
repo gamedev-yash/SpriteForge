@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpriteForge</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -13,9 +14,12 @@
             <div class="upload-area" id="dropZone">
                 <input type="file" id="fileInput" multiple accept="image/*" hidden>
                 <div class="upload-message">
-                    Drop images here or click to upload
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drop images here or click to upload</p>
+                    <span class="file-types">Supported: PNG, JPG, JPEG</span>
                 </div>
             </div>
+            <div id="imagePreviewContainer" class="image-preview-container"></div>
             <button type="submit" id="submitBtn" disabled>Generate Sprite Sheet</button>
         </form>
         <div id="result" class="hidden">
