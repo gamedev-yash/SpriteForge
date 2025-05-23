@@ -135,6 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const outputBaseName = document.getElementById('outputBaseName').value || 'sprite';
+
+        // Check if output name exists
+        const checkRes = await fetch(`/check-output-name?name=${encodeURIComponent(outputBaseName)}`);
+        const checkData = await checkRes.json();
+        if (checkData.exists) {
+            if (!confirm(`A sprite sheet with the name "${outputBaseName}" already exists. Do you want to overwrite it?`)) {
+                return; // User cancelled
+            }
+        }
+
         const formData = new FormData();
         
         // Add images
@@ -143,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Add options
-        formData.append('outputBaseName', document.getElementById('outputBaseName').value || 'sprite');
+        formData.append('outputBaseName', outputBaseName);
         formData.append('maxWidth', document.getElementById('maxWidth').value || '2048');
         formData.append('maxHeight', document.getElementById('maxHeight').value || '2048');
         formData.append('format', document.getElementById('format').value || 'json');
