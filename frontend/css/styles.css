@@ -135,3 +135,23 @@ button:disabled {
 .download-links a:hover {
     background: #45a049;
 }
+
+.cleanup-btn {
+    margin-top: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.cleanup-btn:hover {
+    background: #cc0000;
+}
+
+.cleanup-btn i {
+    margin-right: 0.5rem;
+}
