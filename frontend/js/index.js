@@ -137,6 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData();
         
+        // Log files being sent
+        console.log('Sending files:', Array.from(files.files).map(f => f.name));
+        
         Array.from(files.files).forEach(file => {
             formData.append('images', file);
         });
@@ -155,10 +158,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.success) {
                 console.log('Sprite sheet generated successfully');
+                console.log('Processed files:', data.processedFiles);
+                
+                // Compare sent vs processed files
+                const sentFiles = Array.from(files.files).map(f => f.name);
+                const receivedFiles = data.processedFiles.received.map(f => f.name);
+                
+                console.log('Files comparison:');
+                console.log('- Sent:', sentFiles);
+                console.log('- Received:', receivedFiles);
+                
+                // Check for missing files
+                const missingFiles = sentFiles.filter(f => !receivedFiles.includes(f));
+                if (missingFiles.length > 0) {
+                    console.warn('Missing files:', missingFiles);
+                }
+
                 showResult(data.files);
-                await checkUploads(); // Check if we need to show cleanup button
+                await checkUploads();
             } else {
                 console.error('Error:', data.error);
+                if (data.files) {
+                    console.error('Files that failed:', data.files);
+                }
                 alert(`Error generating sprite sheet: ${data.error}`);
                 if (data.details) {
                     console.error('Details:', data.details);

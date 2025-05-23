@@ -41,13 +41,22 @@ class SpriteController {
         files: {
           spriteSheet: `/output/sprite-${outputName}.png`,
           data: `/output/sprite-${outputName}.json`
+        },
+        processedFiles: {
+          received: req.files.map(f => ({ 
+            name: f.originalname,
+            path: f.path,
+            size: f.size
+          })),
+          used: uploadedFiles
         }
       });
     } catch (error) {
       console.error('Error processing request:', error);
       res.status(500).json({ 
         error: 'Failed to process images',
-        details: error.message
+        details: error.message,
+        files: req.files.map(f => f.originalname) // Include files in error response
       });
     }
   }
