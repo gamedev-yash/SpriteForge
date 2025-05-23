@@ -75,6 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.files = files.files;
         submitBtn.disabled = files.files.length === 0;
     }
+
+    // Add cleanup function
+    async function cleanupUploads() {
+        try {
+            const response = await fetch('/cleanup', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            console.log('Cleanup response:', data);
+        } catch (error) {
+            console.error('Cleanup failed:', error);
+        }
+    }
+
+    // Call cleanup when page loads
+    cleanupUploads();
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -86,9 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        console.log('Uploading files:', Array.from(files.files).map(f => f.name));
         
         try {
+            // Clean previous uploads first
+            await cleanupUploads();
+
             const response = await fetch('/pack', {
                 method: 'POST',
                 body: formData
@@ -100,6 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 console.log('Sprite sheet generated successfully');
                 showResult(data.files);
+                // Clear the preview container and reset files
+                previewContainer.innerHTML = '';
+                files = new DataTransfer();
+                updateFileInput();
             } else {
                 console.error('Error:', data.error);
                 alert(`Error generating sprite sheet: ${data.error}`);

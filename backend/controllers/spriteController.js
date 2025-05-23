@@ -35,6 +35,16 @@ class SpriteController {
         throw new Error('Output files were not created');
       }
 
+      // After successful sprite generation, clean up uploaded files
+      uploadedFiles.forEach(file => {
+        try {
+          fs.unlinkSync(file);
+          console.log(`Cleaned up: ${file}`);
+        } catch (err) {
+          console.error(`Failed to clean up file ${file}:`, err);
+        }
+      });
+
       res.json({
         success: true,
         message: 'Sprite sheet generated successfully',
@@ -56,8 +66,16 @@ class SpriteController {
     const uploadsDir = path.join(__dirname, '../../uploads');
     if (fs.existsSync(uploadsDir)) {
       const files = fs.readdirSync(uploadsDir);
+      console.log(`Cleaning up ${files.length} files from uploads directory`);
       for (const file of files) {
-        fs.unlinkSync(path.join(uploadsDir, file));
+        const filePath = path.join(uploadsDir, file);
+        try {
+          fs.unlinkSync(filePath);
+          console.log(`Cleaned up: ${filePath}`);
+        } catch (err) {
+          console.error(`Failed to clean up file ${filePath}:`, err);
+          throw err;
+        }
       }
     }
   }
