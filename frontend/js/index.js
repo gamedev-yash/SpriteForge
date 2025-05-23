@@ -7,30 +7,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewContainer = document.getElementById('imagePreviewContainer');
     const cleanupBtn = document.getElementById('cleanupBtn');
     cleanupBtn.style.display = 'none'; // Hide by default
-    
+
+    const modal = document.getElementById('warningModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalConfirm = document.getElementById('modalConfirm');
+    const modalCancel = document.getElementById('modalCancel');
+    const closeModal = document.querySelector('.close-modal');
+
+    function showModal(message) {
+        return new Promise((resolve) => {
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('show'), 10);
+
+            const handleConfirm = () => {
+                hideModal();
+                resolve(true);
+            };
+
+            const handleCancel = () => {
+                hideModal();
+                resolve(false);
+            };
+
+            modalConfirm.addEventListener('click', handleConfirm, { once: true });
+            modalCancel.addEventListener('click', handleCancel, { once: true });
+            closeModal.addEventListener('click', handleCancel, { once: true });
+        });
+    }
+
+    function hideModal() {
+        modal.classList.remove('show');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
     let files = new DataTransfer();
-    
+
     // Handle drag and drop
     dropZone.addEventListener('click', () => fileInput.click());
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('dragover');
     });
-    
+
     dropZone.addEventListener('dragleave', () => {
         dropZone.classList.remove('dragover');
     });
-    
+
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.classList.remove('dragover');
         handleFiles(e.dataTransfer.files);
     });
-    
+
     fileInput.addEventListener('change', (e) => {
         handleFiles(e.target.files);
     });
-    
+
     function handleFiles(newFiles) {
         Array.from(newFiles).forEach(file => {
             if (file.type.startsWith('image/')) {
@@ -40,29 +73,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         updateFileInput();
     }
-    
+
     function createImagePreview(file) {
         const wrapper = document.createElement('div');
         wrapper.className = 'image-preview-wrapper';
-        
+
         const img = document.createElement('img');
         img.className = 'image-preview';
         img.file = file;
-        
+
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-image';
         removeBtn.innerHTML = '<i class="fas fa-times"></i>';
         removeBtn.onclick = () => removeImage(file, wrapper);
-        
+
         wrapper.appendChild(img);
         wrapper.appendChild(removeBtn);
         previewContainer.appendChild(wrapper);
-        
+
         const reader = new FileReader();
         reader.onload = (e) => img.src = e.target.result;
         reader.readAsDataURL(file);
     }
-    
+
     function removeImage(file, wrapper) {
         const newFiles = new DataTransfer();
         Array.from(files.files)
@@ -72,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.remove();
         updateFileInput();
     }
-    
+
     function updateFileInput() {
         fileInput.files = files.files;
         submitBtn.disabled = files.files.length === 0;
@@ -102,11 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             console.log('Cleanup response:', data);
-            
+
             if (data.filesDeleted > 0) {
                 alert(`Cleaned up ${data.filesDeleted} files`);
             }
-            
+
             // Clear everything
             previewContainer.innerHTML = '';
             files = new DataTransfer();
@@ -132,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cleanupBtn.innerHTML = '<i class="fas fa-broom"></i> Clean All Uploads';
         }
     });
-    
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const outputBaseName = document.getElementById('outputBaseName').value || 'sprite';
@@ -141,13 +174,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkRes = await fetch(`/check-output-name?name=${encodeURIComponent(outputBaseName)}`);
         const checkData = await checkRes.json();
         if (checkData.exists) {
-            if (!confirm(`A sprite sheet with the name "${outputBaseName}" already exists. Do you want to overwrite it?`)) {
-                return; // User cancelled
-            }
+            const confirmed = await showModal(
+                `A sprite sheet with the name "${outputBaseName}" already exists. Do you want to overwrite it?`
+            );
+            if (!confirmed) return;
         }
 
         const formData = new FormData();
-        
+
         // Add images
         Array.from(files.files).forEach(file => {
             formData.append('images', file);
@@ -160,31 +194,31 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('format', document.getElementById('format').value || 'json');
         formData.append('trim', document.getElementById('trim').checked ? 'true' : '');
         formData.append('enableRotation', document.getElementById('enableRotation').checked ? 'true' : '');
-        
+
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        
+
         try {
             const response = await fetch('/pack', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const data = await response.json();
             console.log('Server response:', data);
 
             if (data.success) {
                 console.log('Sprite sheet generated successfully');
                 console.log('Processed files:', data.processedFiles);
-                
+
                 // Compare sent vs processed files
                 const sentFiles = Array.from(files.files).map(f => f.name);
                 const receivedFiles = data.processedFiles.received.map(f => f.name);
-                
+
                 console.log('Files comparison:');
                 console.log('- Sent:', sentFiles);
                 console.log('- Received:', receivedFiles);
-                
+
                 // Check for missing files
                 const missingFiles = sentFiles.filter(f => !receivedFiles.includes(f));
                 if (missingFiles.length > 0) {
@@ -211,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = 'Generate Sprite Sheet';
         }
     });
-    
+
     function showResult(files) {
         const links = document.querySelector('.download-links');
         const resultDiv = document.getElementById('result');

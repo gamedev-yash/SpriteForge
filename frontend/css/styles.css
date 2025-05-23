@@ -284,3 +284,122 @@ button:disabled {
     color: white;
     transform: scale(1.1);
 }
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h3 {
+    color: #f44336;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #666;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: auto;
+    transition: color 0.2s;
+}
+
+.close-modal:hover {
+    color: #f44336;
+    background: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: #455a64;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: auto;
+}
+
+.cancel-btn {
+    background: #e0e0e0;
+    color: #455a64;
+}
+
+.cancel-btn:hover {
+    background: #bdbdbd;
+    transform: translateY(-1px);
+}
+
+.confirm-btn {
+    background: #f44336;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+}
+
+.hidden {
+    display: none !important;
+}
