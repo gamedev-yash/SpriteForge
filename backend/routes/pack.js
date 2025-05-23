@@ -95,7 +95,7 @@ router.post('/pack', upload.array('images'), async (req, res) => {
     });
   } finally {
     // Optional: Clean up uploaded files
-    // uploadedFiles.forEach(file => fs.unlinkSync(file));
+    uploadedFiles.forEach(file => fs.unlinkSync(file));
   }
 });
 
