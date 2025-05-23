@@ -19,6 +19,7 @@
   "homepage": "https://github.com/gamedev-yash/SpriteForge#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "fs": "^0.0.1-security",
     "multer": "^2.0.0"
   }
 }
