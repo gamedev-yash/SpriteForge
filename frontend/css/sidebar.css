@@ -1,0 +1,130 @@
+
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header h2 {
+    color: #2196f3;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.nav-item {
+    width: 100%;
+    padding: 1rem;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #455a64;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-item:hover {
+    background: #f5f7fa;
+    transform: none;
+    box-shadow: none;
+}
+
+.nav-item.active {
+    background: #e3f2fd;
+    color: #2196f3;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    background: #f5f7fa;
+}
+
+/* History Grid Styles */
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.history-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-preview {
+    width: 100%;
+    height: 150px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    object-fit: contain;
+    padding: 0.5rem;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.history-info h3 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.history-info p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.history-actions button {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+#logoutBtn {
+    margin-top: auto;
+    width: 100%;
+}
+
+/* Modify existing container style */
+.container {
+    margin: 0;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
