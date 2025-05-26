@@ -65,8 +65,8 @@ class TexturePackerUtil {
         timeout: 30000
       }, (error, stdout, stderr) => {
         if (error) {
-          console.error('TexturePacker Error:', error);
-          console.error('stderr:', stderr);
+          // Include stderr in the error object
+          error.stderr = stderr;
           reject(error);
           return;
         }

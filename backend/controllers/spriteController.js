@@ -84,8 +84,8 @@ class SpriteController {
     } catch (error) {
       console.error('Error processing request:', error);
       res.status(500).json({
-        error: 'Failed to process images',
-        details: error.message,
+        error: error.message || 'Failed to process images',
+        details: error.stderr || error.stack || error,
         files: req.files.map(f => f.originalname)
       });
     }
