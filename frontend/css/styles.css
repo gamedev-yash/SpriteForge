@@ -405,6 +405,7 @@ button:disabled {
 }
 
 /* Logout Button Styles */
+/*
 #logoutBtn {
     position: absolute;
     top: 20px;
@@ -431,3 +432,4 @@ button:disabled {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 82, 82, 0.2);
 }
+*/
