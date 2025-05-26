@@ -301,10 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 showResult(data.files);
                 await checkUploads();
             } else {
-                await showModal(
-                    `Error generating sprite sheet: ${data.error}`,
-                    'OK'
-                );
+                let msg = `Error generating sprite sheet: ${data.error}`;
+                if (data.details) {
+                    msg += `\n\nDetails:\n${data.details}`;
+                }
+                await showModal(msg, 'OK');
                 if (data.details) {
                     console.error('Details:', data.details);
                 }
