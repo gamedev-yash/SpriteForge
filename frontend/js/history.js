@@ -5,6 +5,16 @@ async function fetchHistory() {
   return data.history || [];
 }
 
+async function deleteHistoryItem(id) {
+  const res = await fetch(`/history/${id}`, { method: 'DELETE' });
+  return res.ok;
+}
+
+async function clearHistory() {
+  const res = await fetch('/history', { method: 'DELETE' });
+  return res.ok;
+}
+
 function renderHistoryItem(item) {
   return `
     <div class="history-item">
@@ -17,6 +27,7 @@ function renderHistoryItem(item) {
         <div class="history-actions">
           <a href="${item.spriteSheetPath}" download>Download PNG</a>
           <a href="${item.dataPath}" download>Download Data</a>
+          <button class="delete-btn" data-id="${item._id}">Delete</button>
         </div>
       </div>
     </div>
@@ -33,7 +44,31 @@ async function showHistory() {
     grid.innerHTML = '<div>No history found.</div>';
     return;
   }
-  grid.innerHTML = history.map(renderHistoryItem).join('');
+  grid.innerHTML = `
+    <button id="clearHistoryBtn" class="cleanup-btn" style="margin-bottom:1rem;">Clear History</button>
+    ${history.map(renderHistoryItem).join('')}
+  `;
+
+  // Attach delete handlers
+  grid.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.onclick = async () => {
+      if (confirm('Delete this entry?')) {
+        await deleteHistoryItem(btn.dataset.id);
+        showHistory();
+      }
+    };
+  });
+
+  // Attach clear history handler
+  const clearBtn = grid.querySelector('#clearHistoryBtn');
+  if (clearBtn) {
+    clearBtn.onclick = async () => {
+      if (confirm('Clear all history?')) {
+        await clearHistory();
+        showHistory();
+      }
+    };
+  }
 }
 
 // Call showHistory() when the history page is shown
