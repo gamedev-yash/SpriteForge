@@ -147,3 +147,9 @@ app.listen(port, () => {
 });
 
 console.log('[DEBUG] process.cwd():', process.cwd());
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({ error: 'Internal server error', details: err.message });
+});

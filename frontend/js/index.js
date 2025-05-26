@@ -174,6 +174,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Import/Export Params ---
+    document.getElementById('exportParamsBtn').onclick = () => {
+        const params = getAllParams();
+        const blob = new Blob([JSON.stringify(params, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'spriteforge-params.json';
+        a.click();
+    };
+
+    document.getElementById('importParamsBtn').onclick = () => {
+        document.getElementById('importParamsFile').click();
+    };
+
+    document.getElementById('importParamsFile').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const params = JSON.parse(ev.target.result);
+                setAllParams(params);
+            } catch (err) {
+                showModal('Invalid parameter file.', 'OK');
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    // --- Helper functions to get/set all params ---
+    function getAllParams() {
+        return {
+            outputBaseName: document.getElementById('outputBaseName').value,
+            maxWidth: document.getElementById('maxWidth').value,
+            maxHeight: document.getElementById('maxHeight').value,
+            format: document.getElementById('format').value,
+            textureFormat: document.getElementById('textureFormat').value,
+            padding: document.getElementById('padding').value,
+            shapePadding: document.getElementById('shapePadding').value,
+            borderPadding: document.getElementById('borderPadding').value,
+            algorithm: document.getElementById('algorithm').value,
+            scale: document.getElementById('scale').value,
+            extrude: document.getElementById('extrude').value,
+            backgroundColor: document.getElementById('backgroundColor').value,
+            jpgQuality: document.getElementById('jpgQuality').value,
+            webpQuality: document.getElementById('webpQuality').value,
+            ditherType: document.getElementById('ditherType').value,
+            trim: document.getElementById('trim').checked,
+            enableRotation: document.getElementById('enableRotation').checked,
+            multipack: document.getElementById('multipack').checked,
+            customArgs: document.getElementById('customArgs').value
+        };
+    }
+
+    function setAllParams(params) {
+        for (const key in params) {
+            const el = document.getElementById(key);
+            if (!el) continue;
+            if (el.type === 'checkbox') {
+                el.checked = !!params[key];
+            } else {
+                el.value = params[key];
+            }
+        }
+    }
+
+    // --- Update form submission to include all params ---
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const outputBaseName = document.getElementById('outputBaseName').value || 'sprite';
@@ -195,13 +262,11 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('images', file);
         });
 
-        // Add options
-        formData.append('outputBaseName', outputBaseName);
-        formData.append('maxWidth', document.getElementById('maxWidth').value || '2048');
-        formData.append('maxHeight', document.getElementById('maxHeight').value || '2048');
-        formData.append('format', document.getElementById('format').value || 'json');
-        formData.append('trim', document.getElementById('trim').checked ? 'true' : '');
-        formData.append('enableRotation', document.getElementById('enableRotation').checked ? 'true' : '');
+        // Add all options
+        const params = getAllParams();
+        for (const key in params) {
+            formData.append(key, params[key]);
+        }
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
@@ -236,10 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 showResult(data.files);
                 await checkUploads();
             } else {
-                await showModal(
-                    `Error generating sprite sheet: ${data.error}`,
-                    'OK'
-                );
+                let msg = `Error generating sprite sheet: ${data.error}`;
+                if (data.details) {
+                    msg += `\n\nDetails:\n${data.details}`;
+                }
+                await showModal(msg, 'OK');
                 if (data.details) {
                     console.error('Details:', data.details);
                 }
