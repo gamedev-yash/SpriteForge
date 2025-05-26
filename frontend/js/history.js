@@ -78,10 +78,15 @@ async function showHistory() {
   // Attach delete handlers
   grid.querySelectorAll('.delete-btn').forEach(btn => {
     btn.onclick = async () => {
-      if (confirm('Delete this entry?')) {
-        await deleteHistoryItem(btn.dataset.id);
-        showHistory();
-      }
+        const confirmed = await showModal(
+            'Are you sure you want to delete this sprite sheet?',
+            'Delete',
+            'Cancel'
+        );
+        if (confirmed) {
+            await deleteHistoryItem(btn.dataset.id);
+            showHistory();
+        }
     };
   });
 
@@ -89,10 +94,15 @@ async function showHistory() {
   const clearBtn = grid.querySelector('#clearHistoryBtn');
   if (clearBtn) {
     clearBtn.onclick = async () => {
-      if (confirm('Clear all history?')) {
-        await clearHistory();
-        showHistory();
-      }
+        const confirmed = await showModal(
+            'Are you sure you want to clear all history? This action cannot be undone.',
+            'Clear All',
+            'Cancel'
+        );
+        if (confirmed) {
+            await clearHistory();
+            showHistory();
+        }
     };
   }
 }

@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCancel = document.getElementById('modalCancel');
     const closeModal = document.querySelector('.close-modal');
 
-    function showModal(message) {
+    function showModal(message, confirmText = 'OK', cancelText = 'Cancel') {
         return new Promise((resolve) => {
             modalMessage.textContent = message;
+            modalConfirm.textContent = confirmText;
+            modalCancel.textContent = cancelText;
             modal.classList.remove('hidden');
             setTimeout(() => modal.classList.add('show'), 10);
 
@@ -157,7 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle cleanup button click
     cleanupBtn.addEventListener('click', async () => {
-        if (confirm('Are you sure you want to clean up all uploaded files?')) {
+        const confirmed = await showModal(
+            'Are you sure you want to clean up all uploaded files?',
+            'Clean Up',
+            'Cancel'
+        );
+        
+        if (confirmed) {
             cleanupBtn.disabled = true;
             cleanupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cleaning...';
             await cleanupUploads();
@@ -228,18 +236,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 showResult(data.files);
                 await checkUploads();
             } else {
-                console.error('Error:', data.error);
-                if (data.files) {
-                    console.error('Files that failed:', data.files);
-                }
-                alert(`Error generating sprite sheet: ${data.error}`);
+                await showModal(
+                    `Error generating sprite sheet: ${data.error}`,
+                    'OK'
+                );
                 if (data.details) {
                     console.error('Details:', data.details);
                 }
             }
         } catch (error) {
             console.error('Request failed:', error);
-            alert('Error uploading files');
+            await showModal('Error uploading files', 'OK');
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Generate Sprite Sheet';
