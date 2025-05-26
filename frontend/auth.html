@@ -1,71 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Auth Example</title>
-  <script src="js/auth.js"></script>
-  <script>
-    // checks if the user is already logged in when the page loads
-    (async function() {
-      const res = await getProfile();
-      if (res.user) {
-        window.location.href = 'index.html'; // or your home page
-      }
-    })();
-  </script>
+    <meta charset="UTF-8">
+    <title>SpriteForge - Authentication</title>
+    <link rel="stylesheet" href="./css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <script>
+        // checks if the user is already logged in when the page loads
+        (async function() {
+            const res = await getProfile();
+            if (res.user) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
 </head>
 <body>
-  <h2>Register</h2>
-  <form id="registerForm">
-    <input type="text" id="regUsername" placeholder="Username" required>
-    <input type="password" id="regPassword" placeholder="Password" required>
-    <button type="submit">Register</button>
-  </form>
-  <div id="registerMsg"></div>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>SpriteForge</h1>
+            <p>Create and manage your sprite sheets</p>
+        </div>
 
-  <h2>Login</h2>
-  <form id="loginForm">
-    <input type="text" id="loginUsername" placeholder="Username" required>
-    <input type="password" id="loginPassword" placeholder="Password" required>
-    <button type="submit">Login</button>
-  </form>
-  <div id="loginMsg"></div>
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">Login</div>
+            <div class="auth-tab" data-tab="register">Register</div>
+        </div>
 
-  <button id="logoutBtn">Logout</button>
-  <div id="profile"></div>
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="loginUsername" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+            <button type="submit" class="auth-btn">Login</button>
+            <div id="loginMsg" class="message"></div>
+        </form>
 
-  <script>
-    document.getElementById('registerForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('regUsername').value;
-      const password = document.getElementById('regPassword').value;
-      const res = await register(username, password);
-      document.getElementById('registerMsg').innerText = res.message;
-    };
+        <form id="registerForm" class="auth-form hidden">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="regUsername" placeholder="Choose Username" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="regPassword" placeholder="Choose Password" required>
+            </div>
+            <button type="submit" class="auth-btn">Create Account</button>
+            <div id="registerMsg" class="message"></div>
+        </form>
+    </div>
 
-    document.getElementById('loginForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('loginUsername').value;
-      const password = document.getElementById('loginPassword').value;
-      const res = await login(username, password);
-      document.getElementById('loginMsg').innerText = res.message;
-      if (res.message === 'Logged in') {
-        window.location.href = 'index.html'; // or your home page
-      }
-    };
+    <script>
+        // Tab switching logic
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const forms = document.querySelectorAll('.auth-form');
+                forms.forEach(form => form.classList.add('hidden'));
+                document.getElementById(`${tab.dataset.tab}Form`).classList.remove('hidden');
+            });
+        });
 
-    document.getElementById('logoutBtn').onclick = async () => {
-      const res = await logout();
-      document.getElementById('loginMsg').innerText = res.message;
-      document.getElementById('profile').innerText = '';
-    };
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const res = await register(username, password);
+            const msgEl = document.getElementById('registerMsg');
+            msgEl.innerText = res.message;
+            msgEl.className = 'message ' + (res.message.includes('successfully') ? 'success' : 'error');
+        };
 
-    async function showProfile() {
-      const res = await getProfile();
-      if (res.user) {
-        document.getElementById('profile').innerText = `Logged in as: ${res.user.username}`;
-      }
-    }
-  </script>
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const res = await login(username, password);
+            const msgEl = document.getElementById('loginMsg');
+            msgEl.innerText = res.message;
+            msgEl.className = 'message ' + (res.message === 'Logged in' ? 'success' : 'error');
+            if (res.message === 'Logged in') {
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            }
+        };
+    </script>
 </body>
 </html>
