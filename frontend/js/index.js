@@ -266,4 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
             resultDiv.classList.add('hidden');
         }
     }
+
+    // If history page is visible on load, show history
+    if (!document.getElementById('historyPage').classList.contains('hidden') && window.showHistory) {
+        window.showHistory();
+    }
 });

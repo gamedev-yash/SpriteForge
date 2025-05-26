@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SpriteForge - History</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/auth.js"></script>
+  <script src="js/history.js"></script>
+  <style>
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .history-item {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+    .history-preview img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #f5f5f5;
+      border: 1px solid #eee;
+    }
+    .history-info {
+      flex: 1;
+    }
+    .history-filename {
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+    .history-date {
+      font-size: 0.95em;
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+    .history-actions a {
+      margin-right: 1rem;
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .history-actions a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your SpriteForge History</h1>
+  <div id="history-grid" class="history-grid"></div>
+  <script>
+    // Redirect to login if not authenticated
+    (async function() {
+      const res = await getProfile();
+      if (!res.user) {
+        window.location.href = 'auth.html';
+      }
+    })();
+  </script>
+</body>
+</html>

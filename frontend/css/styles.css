@@ -433,3 +433,18 @@ button:disabled {
     box-shadow: 0 4px 12px rgba(255, 82, 82, 0.2);
 }
 */
+
+/* Add to styles.css or sidebar.css */
+.delete-btn {
+  background: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+}

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const TexturePackerUtil = require('../utils/texturePacker');
+const History = require('../models/History'); // <-- Add this line
 
 const getUniqueOutputName = (baseName, outputPath) => {
   let name = baseName;
@@ -62,6 +63,23 @@ class SpriteController {
       // Verify output files exist
       if (!fs.existsSync(outputPngPath) || !fs.existsSync(outputJsonPath)) {
         throw new Error('Output files were not created');
+      }
+
+      // --- Save history entry ---
+      if (req.session && req.session.userId) {
+        await History.create({
+          user: req.session.userId,
+          outputName,
+          spriteSheetPath: `/output/${outputName}.png`,
+          dataPath: `/output/${outputName}.json`,
+          options: {
+            maxWidth,
+            maxHeight,
+            format,
+            trim: trim === 'true',
+            enableRotation: enableRotation === 'true'
+          }
+        });
       }
 
       res.json({
