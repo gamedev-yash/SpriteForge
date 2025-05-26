@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 const connectMongo = require('./utils/conn');
 const User = require('./models/User');
 const packRoutes = require('./routes/pack');
+const historyRoutes = require('./routes/history'); 
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -137,6 +138,9 @@ app.get('/profile', requireAuth, async (req, res) => {
 
 // --- SPRITE PACKING ROUTES ---
 app.use('/', packRoutes);
+
+// --- HISTORY ROUTES ---
+app.use('/history', historyRoutes); 
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
