@@ -34,7 +34,9 @@ function renderHistoryItem(item) {
           <a href="${item.dataPath}" download>
             <i class="fas fa-file-code"></i> Data
           </a>
-          <button class="delete-btn" data-id="${item._id}">Delete</button>
+          <button class="delete-btn" data-id="${item._id}">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </div>
       </div>
     </div>
