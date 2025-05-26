@@ -30,9 +30,10 @@ router.delete('/:id', requireAuth, async (req, res) => {
     const entry = await History.findOne({ _id: req.params.id, user: req.session.userId });
     if (!entry) return res.status(404).json({ message: 'Not found' });
 
+    const outputDir = process.env.OUTPUT_DIR || 'output';
     // Delete files
-    const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath);
-    const dataPath = path.join(__dirname, '../../', entry.dataPath);
+    const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath.replace('/output/', `${outputDir}/`));
+    const dataPath = path.join(__dirname, '../../', entry.dataPath.replace('/output/', `${outputDir}/`));
     [spritePath, dataPath].forEach(file => {
       if (fs.existsSync(file)) fs.unlinkSync(file);
     });
@@ -49,9 +50,10 @@ router.delete('/', requireAuth, async (req, res) => {
   try {
     const entries = await History.find({ user: req.session.userId });
     let deleted = 0;
+    const outputDir = process.env.OUTPUT_DIR || 'output';
     for (const entry of entries) {
-      const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath);
-      const dataPath = path.join(__dirname, '../../', entry.dataPath);
+      const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath.replace('/output/', `${outputDir}/`));
+      const dataPath = path.join(__dirname, '../../', entry.dataPath.replace('/output/', `${outputDir}/`));
       [spritePath, dataPath].forEach(file => {
         if (fs.existsSync(file)) fs.unlinkSync(file);
       });
