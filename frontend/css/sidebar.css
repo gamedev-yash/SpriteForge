@@ -56,63 +56,170 @@
     background: #f5f7fa;
 }
 
-/* History Grid Styles */
+/* Updated History Grid Styles */
 .history-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    padding: 1rem;
 }
 
 .history-item {
     background: white;
     border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .history-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .history-preview {
-    width: 100%;
-    height: 150px;
-    background: #f5f5f5;
+    flex: 0 0 100px; /* Fixed width */
+    height: 100px;
+    background: #f8f9fa;
     border-radius: 8px;
-    margin-bottom: 1rem;
-    object-fit: contain;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.history-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* This ensures image fits without distortion */
     padding: 0.5rem;
 }
 
 .history-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
 }
 
-.history-info h3 {
+.history-filename {
+    font-weight: 600;
     color: #2c3e50;
-    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.history-info p {
-    color: #666;
+.history-date {
+    color: #6c757d;
     font-size: 0.9rem;
+    margin-bottom: 0.75rem;
 }
 
 .history-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 1rem;
 }
 
-.history-actions button {
-    flex: 1;
-    padding: 0.5rem;
+.history-actions a {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.history-actions a:hover {
+    background: #bbdefb;
+    transform: translateY(-1px);
+}
+
+/* Clear History Button Styles */
+#clearHistoryBtn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 10;
+    padding: 0.5rem 1rem;
+    background: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(255, 75, 75, 0.2);
+    width: auto; /* Override the default full width */
+}
+
+#clearHistoryBtn:hover {
+    background: #d32f2f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 75, 75, 0.3);
+}
+
+/* Delete Button Styles */
+.delete-btn {
+    padding: 0.5rem 1rem;
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.delete-btn:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
+
+.delete-btn::before {
+    content: '×';
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Empty State Styles */
+.history-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.history-empty i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+/* Loading State */
+.history-loading {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+/* Modify existing container style */
+.container {
+    margin: 0;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 #logoutBtn {
@@ -139,10 +246,7 @@
     box-shadow: 0 4px 12px rgba(255, 82, 82, 0.2);
 }
 
-/* Modify existing container style */
-.container {
-    margin: 0;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
+/* Add position relative to container for absolute positioning */
+#historyPage .container {
+    position: relative;
 }

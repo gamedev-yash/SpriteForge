@@ -19,14 +19,21 @@ function renderHistoryItem(item) {
   return `
     <div class="history-item">
       <div class="history-preview">
-        <img src="${item.spriteSheetPath}" alt="${item.outputName}" />
+        <img src="${item.spriteSheetPath}" alt="${item.outputName}" loading="lazy" />
       </div>
       <div class="history-info">
         <div class="history-filename">${item.outputName}</div>
-        <div class="history-date">${new Date(item.createdAt).toLocaleString()}</div>
+        <div class="history-date">
+          <i class="far fa-calendar-alt"></i>
+          ${new Date(item.createdAt).toLocaleString()}
+        </div>
         <div class="history-actions">
-          <a href="${item.spriteSheetPath}" download>Download PNG</a>
-          <a href="${item.dataPath}" download>Download Data</a>
+          <a href="${item.spriteSheetPath}" download>
+            <i class="fas fa-download"></i> PNG
+          </a>
+          <a href="${item.dataPath}" download>
+            <i class="fas fa-file-code"></i> Data
+          </a>
           <button class="delete-btn" data-id="${item._id}">Delete</button>
         </div>
       </div>
@@ -35,17 +42,34 @@ function renderHistoryItem(item) {
 }
 
 async function showHistory() {
-  // Only select the grid inside the visible history page
   const grid = document.querySelector('#historyPage .history-grid');
   if (!grid) return;
-  grid.innerHTML = '<div>Loading...</div>';
+
+  grid.innerHTML = `
+    <div class="history-loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading history...</p>
+    </div>
+  `;
+
   const history = await fetchHistory();
+  
   if (!history.length) {
-    grid.innerHTML = '<div>No history found.</div>';
+    grid.innerHTML = `
+      <div class="history-empty">
+        <i class="far fa-folder-open"></i>
+        <p>No sprite sheets in your history yet.</p>
+        <p>Generate some sprites to see them here!</p>
+      </div>
+    `;
     return;
   }
+
   grid.innerHTML = `
-    <button id="clearHistoryBtn" class="cleanup-btn" style="margin-bottom:1rem;">Clear History</button>
+    <button id="clearHistoryBtn">
+      <i class="fas fa-trash-alt"></i>
+      Clear All History
+    </button>
     ${history.map(renderHistoryItem).join('')}
   `;
 
