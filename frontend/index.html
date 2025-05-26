@@ -5,65 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpriteForge</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-  <div class="container">
-        <h1>SpriteForge</h1>
-        <form id="uploadForm">
-            <div class="upload-area" id="dropZone">
-                <input type="file" id="fileInput" multiple accept="image/*" hidden>
-                <div class="upload-message">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drop images here or click to upload</p>
-                    <span class="file-types">Supported: PNG, JPG, JPEG</span>
+    <div class="app-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>SpriteForge</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-page="generator">
+                    <i class="fas fa-magic"></i>
+                    Generator
+                </button>
+                <button class="nav-item" data-page="history">
+                    <i class="fas fa-history"></i>
+                    History
+                </button>
+            </nav>
+            <button id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> 
+                Logout
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Generator Page -->
+            <div class="page" id="generatorPage">
+                <div class="container">
+                    <h1>SpriteForge</h1>
+                    <form id="uploadForm">
+                        <div class="upload-area" id="dropZone">
+                            <input type="file" id="fileInput" multiple accept="image/*" hidden>
+                            <div class="upload-message">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drop images here or click to upload</p>
+                                <span class="file-types">Supported: PNG, JPG, JPEG</span>
+                            </div>
+                        </div>
+                        <div id="imagePreviewContainer" class="image-preview-container"></div>
+                        <fieldset>
+                            <legend>Sprite Sheet Options</legend>
+                            <div class="options-grid">
+                                <label>
+                                    Output Base Name
+                                    <input type="text" id="outputBaseName" name="outputBaseName" placeholder="sprite" value="sprite" />
+                                </label>
+                                <label>
+                                    Max Width
+                                    <input type="number" id="maxWidth" name="maxWidth" placeholder="2048" value="2048" min="1" />
+                                </label>
+                                <label>
+                                    Max Height
+                                    <input type="number" id="maxHeight" name="maxHeight" placeholder="2048" value="2048" min="1" />
+                                </label>
+                                <label>
+                                    Format
+                                    <select id="format" name="format">
+                                        <option value="json">JSON</option>
+                                        <option value="json-array">JSON Array</option>
+                                        <option value="phaser">Phaser</option>
+                                        <option value="unity">Unity</option>
+                                    </select>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="trim" name="trim" checked />
+                                    Trim Transparent Pixels
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableRotation" name="enableRotation" />
+                                    Enable Rotation
+                                </label>
+                            </div>
+                        </fieldset>
+                        <button type="submit" id="submitBtn" disabled>Generate Sprite Sheet</button>
+                    </form>
+                    <div id="result" class="hidden">
+                        <h2>Generated Files</h2>
+                        <div class="download-links"></div>
+                    </div>
+                    <button id="cleanupBtn" class="cleanup-btn">
+                        <i class="fas fa-broom"></i> Clean All Uploads
+                    </button>
                 </div>
             </div>
-            <div id="imagePreviewContainer" class="image-preview-container"></div>
-            <fieldset>
-                <legend>Sprite Sheet Options</legend>
-                <div class="options-grid">
-                    <label>
-                        Output Base Name
-                        <input type="text" id="outputBaseName" name="outputBaseName" placeholder="sprite" value="sprite" />
-                    </label>
-                    <label>
-                        Max Width
-                        <input type="number" id="maxWidth" name="maxWidth" placeholder="2048" value="2048" min="1" />
-                    </label>
-                    <label>
-                        Max Height
-                        <input type="number" id="maxHeight" name="maxHeight" placeholder="2048" value="2048" min="1" />
-                    </label>
-                    <label>
-                        Format
-                        <select id="format" name="format">
-                            <option value="json">JSON</option>
-                            <option value="json-array">JSON Array</option>
-                            <option value="phaser">Phaser</option>
-                            <option value="unity">Unity</option>
-                        </select>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="trim" name="trim" checked />
-                        Trim Transparent Pixels
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="enableRotation" name="enableRotation" />
-                        Enable Rotation
-                    </label>
+
+            <!-- History Page -->
+            <div class="page hidden" id="historyPage">
+                <div class="container">
+                    <h1>Sprite History</h1>
+                    <div class="history-grid">
+                        <!-- History items will be dynamically added here -->
+                    </div>
                 </div>
-            </fieldset>
-            <button type="submit" id="submitBtn" disabled>Generate Sprite Sheet</button>
-        </form>
-        <div id="result" class="hidden">
-            <h2>Generated Files</h2>
-            <div class="download-links"></div>
-        </div>
-        <button id="cleanupBtn" class="cleanup-btn">
-            <i class="fas fa-broom"></i> Clean All Uploads
-        </button>
+            </div>
+        </main>
     </div>
     <div id="warningModal" class="modal hidden">
         <div class="modal-content">
@@ -82,6 +121,7 @@
     </div>
     <script src="./js/index.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/navigation.js"></script>
     <script>
       // Redirect to login if not authenticated
       (async function() {
