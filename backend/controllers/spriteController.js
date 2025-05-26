@@ -63,6 +63,7 @@ class SpriteController {
         });
       }
 
+      console.log('About to send success response');
       res.json({
         success: true,
         message: 'Sprite sheet generated successfully',
@@ -81,13 +82,19 @@ class SpriteController {
           duplicateCount: uploadedFiles.length - new Set(uploadedFiles).size
         }
       });
+      console.log('Success response sent');
     } catch (error) {
       console.error('Error processing request:', error);
-      res.status(500).json({
-        error: error.message || 'Failed to process images',
-        details: error.stderr || error.stack || error,
-        files: req.files.map(f => f.originalname)
-      });
+      try {
+        res.status(500).json({
+          error: error.message || 'Failed to process images',
+          details: error.stderr || error.stack || error,
+          files: req.files.map(f => f.originalname)
+        });
+        console.log('Error response sent');
+      } catch (e) {
+        console.error('Failed to send error response:', e);
+      }
     }
   }
 
