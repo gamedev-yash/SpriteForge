@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <title>Auth Example</title>
   <script src="js/auth.js"></script>
+  <script>
+    // checks if the user is already logged in when the page loads
+    (async function() {
+      const res = await getProfile();
+      if (res.user) {
+        window.location.href = 'index.html'; // or your home page
+      }
+    })();
+  </script>
 </head>
 <body>
   <h2>Register</h2>
@@ -40,7 +49,9 @@
       const password = document.getElementById('loginPassword').value;
       const res = await login(username, password);
       document.getElementById('loginMsg').innerText = res.message;
-      if (res.message === 'Logged in') showProfile();
+      if (res.message === 'Logged in') {
+        window.location.href = 'index.html'; // or your home page
+      }
     };
 
     document.getElementById('logoutBtn').onclick = async () => {
