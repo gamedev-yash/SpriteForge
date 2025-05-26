@@ -24,7 +24,8 @@ function renderHistoryItem(item) {
 }
 
 async function showHistory() {
-  const grid = document.getElementById('history-grid');
+  // Only select the grid inside the visible history page
+  const grid = document.querySelector('#historyPage .history-grid');
   if (!grid) return;
   grid.innerHTML = '<div>Loading...</div>';
   const history = await fetchHistory();
@@ -35,5 +36,5 @@ async function showHistory() {
   grid.innerHTML = history.map(renderHistoryItem).join('');
 }
 
-// Call showHistory() on page load
-document.addEventListener('DOMContentLoaded', showHistory);
+// Call showHistory() when the history page is shown
+window.showHistory = showHistory;
