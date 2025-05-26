@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pages.forEach(page => {
                 page.classList.toggle('hidden', page.id !== `${targetPage}Page`);
             });
+
+            // If navigating to history, load history
+            if (targetPage === 'history' && window.showHistory) {
+                window.showHistory();
+            }
         });
     });
 });
