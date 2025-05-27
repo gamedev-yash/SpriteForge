@@ -1,6 +1,6 @@
-input
-uploads
-output
+/input
+/uploads
+/output
 
-node_modules
+/node_modules
 .env
