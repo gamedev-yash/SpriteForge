@@ -155,6 +155,7 @@ console.log('[DEBUG] process.cwd():', process.cwd());
 
 // Auto-cleanup old uploads every hour
 setInterval(() => {
+  // SpriteController.cleanupOldUploads(60 * 1000)  // 1 minute
   SpriteController.cleanupOldUploads(24 * 60 * 60 * 1000)  // 1 day
     .then(deleted => {
       if (deleted > 0) {
@@ -165,6 +166,7 @@ setInterval(() => {
       console.error('[AutoCleanup] Error during cleanup:', err);
     });
 }, 60 * 60 * 1000); // Every hour
+// }, 30 * 1000); // Every 30 seconds
 
 // Global error handler
 app.use((err, req, res, next) => {
