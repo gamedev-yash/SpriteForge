@@ -24,7 +24,7 @@ class SpriteController {
     // Collect all options from the form
     const options = { ...req.body };
 
-    const outputPath = path.join(__dirname, '../../output');
+    const outputPath = path.join(__dirname, '../../', process.env.OUTPUT_DIR || 'output');
     const uploadedFiles = req.files.map(file => file.path);
 
     let outputName = options.outputBaseName || 'sprite';
@@ -99,7 +99,7 @@ class SpriteController {
   }
 
   static async checkUploads() {
-    const uploadsDir = path.join(__dirname, '../../uploads');
+    const uploadsDir = path.join(__dirname, '../../', process.env.UPLOADS_DIR || 'uploads');
     if (fs.existsSync(uploadsDir)) {
       const files = fs.readdirSync(uploadsDir);
       return files.length;
@@ -108,7 +108,7 @@ class SpriteController {
   }
 
   static async cleanupUploads() {
-    const uploadsDir = path.join(__dirname, '../../uploads');
+    const uploadsDir = path.join(__dirname, '../../', process.env.UPLOADS_DIR || 'uploads');
     let filesDeleted = 0;
     
     if (fs.existsSync(uploadsDir)) {

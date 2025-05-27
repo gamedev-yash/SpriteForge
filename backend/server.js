@@ -15,6 +15,10 @@ const historyRoutes = require('./routes/history');
 const app = express();
 const port = process.env.PORT || 3000;
 
+const uploadsDir = process.env.UPLOADS_DIR || 'uploads';
+const outputDir = process.env.OUTPUT_DIR || 'output';
+const frontendDir = process.env.FRONTEND_DIR || 'frontend';
+
 // Enable CORS if needed
 app.use(cors());
 
@@ -44,7 +48,7 @@ app.use(
 connectMongo();
 
 // Ensure directories exist
-['uploads', 'output'].forEach(dir => {
+[uploadsDir, outputDir].forEach(dir => {
   const dirPath = path.join(__dirname, '..', dir);
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
@@ -52,10 +56,10 @@ connectMongo();
 });
 
 // Serve static files from frontend directory
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '..', frontendDir)));
 
 // Serve output files
-app.use('/output', express.static(path.join(__dirname, '../output')));
+app.use('/output', express.static(path.join(__dirname, '..', outputDir)));
 
 // --- AUTH ROUTES ---
 
