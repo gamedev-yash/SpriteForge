@@ -153,6 +153,41 @@ app.listen(port, () => {
 
 console.log('[DEBUG] process.cwd():', process.cwd());
 
+// Run output cleanup once on server start
+SpriteController.cleanupOldOutputs(30 * 24 * 60 * 60 * 1000)
+  .then(deleted => {
+    if (deleted > 0) {
+      console.log(`[AutoCleanup] Deleted ${deleted} old output(s) on startup`);
+    }
+  })
+  .catch(err => {
+    console.error('[AutoCleanup] Error during output startup cleanup:', err);
+  });
+
+// Auto-cleanup old outputs every day
+setInterval(() => {
+  SpriteController.cleanupOldOutputs(30 * 24 * 60 * 60 * 1000) // 30 days
+    .then(deleted => {
+      if (deleted > 0) {
+        console.log(`[AutoCleanup] Deleted ${deleted} old output(s)`);
+      }
+    })
+    .catch(err => {
+      console.error('[AutoCleanup] Error during output cleanup:', err);
+    });
+}, 24 * 60 * 60 * 1000); // Every 24 hours
+
+// Run cleanup once on server start
+SpriteController.cleanupOldUploads(24 * 60 * 60 * 1000)
+  .then(deleted => {
+    if (deleted > 0) {
+      console.log(`[AutoCleanup] Deleted ${deleted} old upload(s) on startup`);
+    }
+  })
+  .catch(err => {
+    console.error('[AutoCleanup] Error during startup cleanup:', err);
+  });
+
 // Auto-cleanup old uploads every hour
 setInterval(() => {
   // SpriteController.cleanupOldUploads(60 * 1000)  // 1 minute
