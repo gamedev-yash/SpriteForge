@@ -1,7 +1,0 @@
-/input
-/uploads
-/output
-
-/node_modules
-.env
-.gitignore
