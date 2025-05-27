@@ -155,6 +155,35 @@ class SpriteController {
     }
     return filesDeleted;
   }
+
+  /**
+   * Delete files older than the given age (in milliseconds) from output directory.
+   * @param {number} maxAgeMs - Maximum age in milliseconds (e.g., 30*24*60*60*1000 for 30 days)
+   * @returns {number} Number of files deleted
+   */
+  static async cleanupOldOutputs(maxAgeMs = 30 * 24 * 60 * 60 * 1000) {
+    const outputDir = path.join(__dirname, '../../', process.env.OUTPUT_DIR || 'output');
+    let filesDeleted = 0;
+    const now = Date.now();
+
+    if (fs.existsSync(outputDir)) {
+        const files = fs.readdirSync(outputDir);
+        for (const file of files) {
+            const filePath = path.join(outputDir, file);
+            try {
+                const stats = fs.statSync(filePath);
+                if (now - stats.mtimeMs > maxAgeMs) {
+                    fs.unlinkSync(filePath);
+                    filesDeleted++;
+                    console.log(`[AutoCleanup] Deleted old output: ${filePath}`);
+                }
+            } catch (err) {
+                console.error(`[AutoCleanup] Failed to check/delete output file ${filePath}:`, err);
+            }
+        }
+    }
+    return filesDeleted;
+  }
 }
 
 module.exports = SpriteController;
