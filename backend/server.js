@@ -11,6 +11,7 @@ const connectMongo = require('./utils/conn');
 const User = require('./models/User');
 const packRoutes = require('./routes/pack');
 const historyRoutes = require('./routes/history'); 
+const SpriteController = require('./controllers/spriteController');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -151,6 +152,19 @@ app.listen(port, () => {
 });
 
 console.log('[DEBUG] process.cwd():', process.cwd());
+
+// Auto-cleanup old uploads every hour
+setInterval(() => {
+  SpriteController.cleanupOldUploads(24 * 60 * 60 * 1000)  // 1 day
+    .then(deleted => {
+      if (deleted > 0) {
+        console.log(`[AutoCleanup] Deleted ${deleted} old upload(s)`);
+      }
+    })
+    .catch(err => {
+      console.error('[AutoCleanup] Error during cleanup:', err);
+    });
+}, 60 * 60 * 1000); // Every hour
 
 // Global error handler
 app.use((err, req, res, next) => {
