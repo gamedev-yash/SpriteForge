@@ -6,12 +6,15 @@ const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const { initGridFS } = require('./utils/gridfs');
 
 const connectMongo = require('./utils/conn');
 const User = require('./models/User');
 const packRoutes = require('./routes/pack');
 const historyRoutes = require('./routes/history'); 
 const SpriteController = require('./controllers/spriteController');
+const gridfsRoutes = require('./routes/gridfs');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -47,6 +50,11 @@ app.use(
 
 // Connect to MongoDB
 connectMongo();
+
+mongoose.connection.once('open', () => {
+    initGridFS(mongoose.connection);
+    console.log('GridFS initialized');
+});
 
 // Ensure directories exist
 [uploadsDir, outputDir].forEach(dir => {
@@ -146,6 +154,9 @@ app.use('/', packRoutes);
 
 // --- HISTORY ROUTES ---
 app.use('/history', historyRoutes); 
+
+// --- GRIDFS ROUTES ---
+app.use('/files', gridfsRoutes);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
