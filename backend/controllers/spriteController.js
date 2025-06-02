@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const TexturePackerUtil = require('../utils/texturePacker');
 const History = require('../models/History'); // <-- Add this line
+const { getGFS } = require('../utils/gridfs');
 
 const getUniqueOutputName = (baseName, outputPath) => {
   let name = baseName;
@@ -14,6 +15,18 @@ const getUniqueOutputName = (baseName, outputPath) => {
   }
   return name;
 };
+
+// Save a file to GridFS
+async function saveFileToGridFS(localPath, filename, contentType) {
+    return new Promise((resolve, reject) => {
+        const gfs = getGFS();
+        const writeStream = gfs.createWriteStream({ filename, content_type: contentType });
+        fs.createReadStream(localPath)
+            .pipe(writeStream)
+            .on('close', file => resolve(file))
+            .on('error', err => reject(err));
+    });
+}
 
 class SpriteController {
   static async generateSprite(req, res) {
@@ -62,6 +75,10 @@ class SpriteController {
           options
         });
       }
+
+      // Save files to GridFS
+      await saveFileToGridFS(outputPngPath, `${outputName}.png`, 'image/png');
+      await saveFileToGridFS(outputJsonPath, `${outputName}.json`, 'application/json');
 
       console.log('About to send success response');
       res.json({
