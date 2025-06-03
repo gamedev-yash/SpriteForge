@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const History = require('../models/History');
-const fs = require('fs');
-const path = require('path');
+const { deleteFileFromGridFS } = require('../utils/gridfs');
 
 // Auth middleware (reuse from server.js)
 function requireAuth(req, res, next) {
@@ -30,13 +29,9 @@ router.delete('/:id', requireAuth, async (req, res) => {
     const entry = await History.findOne({ _id: req.params.id, user: req.session.userId });
     if (!entry) return res.status(404).json({ message: 'Not found' });
 
-    const outputDir = process.env.OUTPUT_DIR || 'output';
-    // Delete files
-    const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath.replace('/output/', `${outputDir}/`));
-    const dataPath = path.join(__dirname, '../../', entry.dataPath.replace('/output/', `${outputDir}/`));
-    [spritePath, dataPath].forEach(file => {
-      if (fs.existsSync(file)) fs.unlinkSync(file);
-    });
+    // Delete files from GridFS
+    await deleteFileFromGridFS(entry.spriteSheetPath);
+    await deleteFileFromGridFS(entry.dataPath);
 
     await entry.deleteOne();
     res.json({ success: true });
@@ -50,13 +45,9 @@ router.delete('/', requireAuth, async (req, res) => {
   try {
     const entries = await History.find({ user: req.session.userId });
     let deleted = 0;
-    const outputDir = process.env.OUTPUT_DIR || 'output';
     for (const entry of entries) {
-      const spritePath = path.join(__dirname, '../../', entry.spriteSheetPath.replace('/output/', `${outputDir}/`));
-      const dataPath = path.join(__dirname, '../../', entry.dataPath.replace('/output/', `${outputDir}/`));
-      [spritePath, dataPath].forEach(file => {
-        if (fs.existsSync(file)) fs.unlinkSync(file);
-      });
+      await deleteFileFromGridFS(entry.spriteSheetPath);
+      await deleteFileFromGridFS(entry.dataPath);
       await entry.deleteOne();
       deleted++;
     }

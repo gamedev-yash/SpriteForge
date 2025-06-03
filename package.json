@@ -27,8 +27,11 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "fs": "^0.0.1-security",
-    "mongoose": "^8.15.0",
-    "multer": "^2.0.0"
+    "gridfs-stream": "^1.1.1",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.1",
+    "multer": "^2.0.0",
+    "multer-gridfs-storage": "^5.0.2"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
