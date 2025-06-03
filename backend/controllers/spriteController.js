@@ -70,8 +70,10 @@ class SpriteController {
         await History.create({
           user: req.session.userId,
           outputName,
-          spriteSheetPath: `/output/${outputName}.png`,
-          dataPath: `/output/${outputName}.json`,
+          // spriteSheetPath: `/output/${outputName}.png`,
+          spriteSheetPath: `${outputName}.png`, // GridFS filename
+          // dataPath: `/output/${outputName}.json`,
+          dataPath: `${outputName}.json`, // GridFS filename
           options
         });
       }

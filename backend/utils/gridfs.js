@@ -14,4 +14,15 @@ function getGFS() {
     return gfs;
 }
 
-module.exports = { initGridFS, getGFS };
+// Add this function to your gridfs.js
+function deleteFileFromGridFS(filename) {
+    const gfs = getGFS();
+    return new Promise((resolve, reject) => {
+        gfs.remove({ filename }, (err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+}
+
+module.exports = { initGridFS, getGFS, deleteFileFromGridFS };
