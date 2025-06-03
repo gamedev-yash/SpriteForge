@@ -21,9 +21,9 @@ RUN npm install
 # Expose the port (Render sets $PORT automatically)
 EXPOSE 3000
 
+RUN ls -l /usr/bin/ | grep -i texturepacker || true
+RUN ls -l /usr/local/bin/ | grep -i texturepacker || true
 RUN find / -type f -iname '*texturepacker*' || true
-RUN which TexturePacker || true
-RUN which texturepacker || true
 
 # Start the app
 CMD ["npm", "start"]

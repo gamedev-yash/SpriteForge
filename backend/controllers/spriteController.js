@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { runTexturePacker } = require('../utils/texturePacker');
+const TexturePackerUtil = require('../utils/texturePacker');
 const History = require('../models/History'); // <-- Add this line
 const { getGFSBucket } = require('../utils/gridfs');
 
