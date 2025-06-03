@@ -1,11 +1,13 @@
-# Use official Node.js image
-FROM node:18
+# Use Ubuntu 23.10 as base for newer libstdc++6
+FROM ubuntu:23.10
 
-# Install dependencies for TexturePacker
+# Install Node.js 18, npm, and dependencies for TexturePacker
 RUN apt-get update && \
-    apt-get install -y wget libqt5core5a libqt5gui5 libqt5widgets5
+    apt-get install -y curl wget libqt5core5a libqt5gui5 libqt5widgets5 && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
-# Download and install TexturePacker CLI (edit version if needed)
+# Download and install TexturePacker 7.7.0
 RUN wget https://www.codeandweb.com/download/texturepacker/7.7.0/TexturePacker-7.7.0.deb && \
     apt-get install -y ./TexturePacker-7.7.0.deb && \
     rm TexturePacker-7.7.0.deb
@@ -22,6 +24,7 @@ RUN npm install
 # Expose the port (Render sets $PORT automatically)
 EXPOSE 3000
 
+# Debug: Show where TexturePacker is installed
 RUN ls -l /usr/bin/ | grep -i texturepacker || true
 RUN ls -l /usr/local/bin/ | grep -i texturepacker || true
 RUN find / -type f -iname '*texturepacker*' || true
