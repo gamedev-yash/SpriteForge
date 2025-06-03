@@ -5,9 +5,9 @@ FROM node:18
 RUN apt-get update && apt-get install -y wget
 
 # Download and install TexturePacker CLI (edit version if needed)
-RUN wget https://www.codeandweb.com/download/texturepacker/7.0.4/TexturePacker-7.0.4-amd64.deb && \
-    dpkg -i TexturePacker-7.0.4-amd64.deb || apt-get -f install -y && \
-    rm TexturePacker-7.0.4-amd64.deb
+RUN wget https://www.codeandweb.com/download/texturepacker/7.7.0/TexturePacker-7.7.0.deb && \
+    dpkg -i TexturePacker-7.7.0.deb || apt-get -f install -y && \
+    rm TexturePacker-7.7.0.deb
 
 # Set working directory
 WORKDIR /opt/render/project/src
