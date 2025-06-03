@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const TexturePackerUtil = require('../utils/texturePacker');
 const History = require('../models/History'); // <-- Add this line
-const { getGFS } = require('../utils/gridfs');
+const { getGFSBucket } = require('../utils/gridfs');
 
 const getUniqueOutputName = (baseName, outputPath) => {
   let name = baseName;
@@ -19,12 +19,12 @@ const getUniqueOutputName = (baseName, outputPath) => {
 // Save a file to GridFS
 async function saveFileToGridFS(localPath, filename, contentType) {
     return new Promise((resolve, reject) => {
-        const gfs = getGFS();
-        const writeStream = gfs.createWriteStream({ filename, content_type: contentType });
+        const bucket = getGFSBucket();
+        const uploadStream = bucket.openUploadStream(filename, { contentType });
         fs.createReadStream(localPath)
-            .pipe(writeStream)
-            .on('close', file => resolve(file))
-            .on('error', err => reject(err));
+            .pipe(uploadStream)
+            .on('error', reject)
+            .on('finish', resolve);
     });
 }
 

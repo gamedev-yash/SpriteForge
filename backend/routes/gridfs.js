@@ -1,14 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { getGFS } = require('../utils/gridfs');
+const { getGFSBucket } = require('../utils/gridfs');
 
-router.get('/:filename', (req, res) => {
-    const gfs = getGFS();
-    const readstream = gfs.createReadStream({ filename: req.params.filename });
-    readstream.on('error', err => {
+router.get('/:filename', async (req, res) => {
+    const bucket = getGFSBucket();
+    try {
+        const downloadStream = bucket.openDownloadStreamByName(req.params.filename);
+        downloadStream.on('error', () => res.status(404).json({ error: 'File not found' }));
+        downloadStream.pipe(res);
+    } catch (err) {
         res.status(404).json({ error: 'File not found' });
-    });
-    readstream.pipe(res);
+    }
 });
 
 module.exports = router;

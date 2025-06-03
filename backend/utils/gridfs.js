@@ -1,28 +1,23 @@
 const mongoose = require('mongoose');
-const Grid = require('gridfs-stream');
-
-let gfs;
+let gfsBucket;
 
 function initGridFS(conn) {
-    Grid.mongo = mongoose.mongo;
-    gfs = Grid(conn.db);
-    return gfs;
+    gfsBucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: 'fs' });
+    return gfsBucket;
 }
 
-function getGFS() {
-    if (!gfs) throw new Error('GridFS not initialized');
-    return gfs;
+function getGFSBucket() {
+    if (!gfsBucket) throw new Error('GridFSBucket not initialized');
+    return gfsBucket;
 }
 
-// Add this function to your gridfs.js
-function deleteFileFromGridFS(filename) {
-    const gfs = getGFS();
-    return new Promise((resolve, reject) => {
-        gfs.remove({ filename }, (err) => {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
+async function deleteFileFromGridFS(filename) {
+    const bucket = getGFSBucket();
+    // Find all files with this filename and delete them
+    const files = await bucket.find({ filename }).toArray();
+    for (const file of files) {
+        await bucket.delete(file._id);
+    }
 }
 
-module.exports = { initGridFS, getGFS, deleteFileFromGridFS };
+module.exports = { initGridFS, getGFSBucket, deleteFileFromGridFS };
