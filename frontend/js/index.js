@@ -326,10 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Only show download links if we have files to preview
         if (previewContainer.children.length > 0) {
             links.innerHTML = `
-                <a href="${files.spriteSheet}" download>
+                <a href="/files/${files.spriteSheet}" download>
                     <i class="fas fa-download"></i> Download Sprite Sheet
                 </a>
-                <a href="${files.data}" download>
+                <a href="/files/${files.data}" download>
                     <i class="fas fa-download"></i> Download Sprite Data
                 </a>
             `;

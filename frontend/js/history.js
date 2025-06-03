@@ -19,7 +19,7 @@ function renderHistoryItem(item) {
   return `
     <div class="history-item">
       <div class="history-preview">
-        <img src="${item.spriteSheetPath}" alt="${item.outputName}" loading="lazy" />
+        <img src="/files/${item.spriteSheetPath}" alt="${item.outputName}" loading="lazy" />
       </div>
       <div class="history-info">
         <div class="history-filename">${item.outputName}</div>
@@ -28,10 +28,10 @@ function renderHistoryItem(item) {
           ${new Date(item.createdAt).toLocaleString()}
         </div>
         <div class="history-actions">
-          <a href="${item.spriteSheetPath}" download>
+          <a href="/files/${item.spriteSheetPath}" download>
             <i class="fas fa-download"></i> PNG
           </a>
-          <a href="${item.dataPath}" download>
+          <a href="/files/${item.dataPath}" download>
             <i class="fas fa-file-code"></i> Data
           </a>
           <button class="delete-btn" data-id="${item._id}">
