@@ -1,4 +1,4 @@
-const { execFile } = require('child_process');
+const { execFile, spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -93,6 +93,11 @@ class TexturePackerUtil {
         console.log('TexturePacker process started');
       });
     });
+  }
+
+  static runTexturePacker(args) {
+    const texturePackerCmd = process.env.TEXTUREPACKER_PATH || 'TexturePacker'; // or 'texturepacker'
+    return spawn(texturePackerCmd, args);
   }
 }
 
