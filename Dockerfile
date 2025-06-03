@@ -1,5 +1,5 @@
-# Use Ubuntu 23.10 as base for newer libstdc++6
-FROM ubuntu:23.10
+# Use Ubuntu 24.04 as base for newer libstdc++6
+FROM ubuntu:24.04
 
 # Install Node.js 18, npm, and dependencies for TexturePacker
 RUN apt-get update && \
