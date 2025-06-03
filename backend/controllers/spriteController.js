@@ -49,8 +49,10 @@ class SpriteController {
         fs.mkdirSync(outputPath, { recursive: true });
       }
 
+      console.log('Checking TexturePacker availability...');
       // Check TexturePacker availability
       await TexturePackerUtil.checkAvailability();
+      console.log('TexturePacker available, generating sprite...');
 
       // Generate sprite sheet with all options
       const { outputPngPath, outputJsonPath } = await TexturePackerUtil.generateSprite(
@@ -59,6 +61,7 @@ class SpriteController {
         outputName,
         options
       );
+      console.log('Sprite generated:', outputPngPath, outputJsonPath);
 
       // Verify output files exist
       if (!fs.existsSync(outputPngPath) || !fs.existsSync(outputJsonPath)) {
