@@ -2,11 +2,11 @@
 FROM node:18
 
 # Install dependencies for TexturePacker
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && \
+    apt-get install -y wget libqt5core5a libqt5gui5 libqt5widgets5
 
 # Download and install TexturePacker CLI (edit version if needed)
 RUN wget https://www.codeandweb.com/download/texturepacker/7.7.0/TexturePacker-7.7.0.deb && \
-    apt-get update && \
     apt-get install -y ./TexturePacker-7.7.0.deb && \
     rm TexturePacker-7.7.0.deb
 
